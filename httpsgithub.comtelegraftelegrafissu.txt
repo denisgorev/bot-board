@@ -1,0 +1,3 @@
+https://github.com/telegraf/telegraf/issues/204
+https://delaney.gitbook.io/telegram-bot-na-js
+https://www.npmjs.com/package/telegraf-broadcast
