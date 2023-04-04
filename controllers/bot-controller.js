@@ -6,11 +6,7 @@ const bot = new Telegraf(process.env.TOKEN)
 const boardGameBot =  () => {
     bot.start((ctx) =>
     ctx.replyWithHTML(
-      `Привет, ${ctx.from.first_name}! Меня зовут Виктор, и я дилер в этом казино. Не хочешь сыграть?
-
-      XGB – Ты как мешаешь? 
-      SDF – Ай фак ёр булщит 
-      OKL – Этот колоду чешет... `
+      `Привет, ${ctx.from.first_name}! Меня зовут Виктор, и я дилер в этом казино. Не хочешь сыграть?`
       )
   );
   bot.on('text', async (ctx) => {
