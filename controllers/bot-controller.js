@@ -69,18 +69,20 @@ const boardGameBot = () => {
         } catch (err) {
           console.log(err);
         }
-      
-      let user_list  = users.map(user => user.chatId)
-      for (i in user_list) {
-        console.log(i)
-        bot.telegram.sendMessage(user_list[i], broadcast[0].text)
+      if (broadcast.length !==0) {
+        let user_list  = users.map(user => user.chatId)
+        for (i in user_list) {
+          console.log(i)
+          bot.telegram.sendMessage(user_list[i], broadcast[0].text)
+        }
       }
+   
       
       return ctx.wizard.next();
     },
     async (ctx) => {
-        ctx.reply('Thank you for your replies, we ll contact your soon');
-        console.log(ctx.wizard.state.data.code)
+        // ctx.reply('Thank you for your replies, we ll contact your soon');
+        // console.log(ctx.wizard.state.data.code)
         return ctx.scene.leave();
     },
   );
