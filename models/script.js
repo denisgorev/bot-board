@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 const scriptSchema = new Schema({
     code: String,
     text: String,
+    next_codes: Array
 });
 
 

@@ -5,10 +5,13 @@ const Broadcast = require("../models/broadcast");
 
 
 const Script = require("../models/script");
-const User = require('../models/user')
+const User = require('../models/user');
+const {yesNoKeyboard} = require("../utils/keyboards");
 
 
 const bot = new Telegraf(process.env.TOKEN);
+
+
 
 
 
@@ -17,8 +20,10 @@ const boardGameBot = () => {
    
     ctx.replyWithHTML(
       `Привет, ${ctx.from.first_name}! Меня зовут Виктор, и я дилер в этом казино. Не хочешь сыграть?`
+      
     //   <A href="tg://user?id={числовой id}">link</a>`
     );
+
     let user = []
 
     try {
@@ -96,6 +101,12 @@ bot.use(session());
 //   })
 
   bot.on("text", async (ctx) => {
+    // ctx.replyWithHTML(
+    //     `Вы действительно хотите добавить задачу:\n\n`+
+    //     `<i>${ctx.message.text}</i>`,
+    //     
+    // )
+
     let input_code = ctx.message.text;
     let script;
     try {
@@ -104,12 +115,31 @@ bot.use(session());
     } catch (err) {
       console.log(err);
     }
-    if (script.length != 0) {
-        ctx.reply(script[0].text);
+    if (script.length !== 0) {    
+
+        ctx.reply(script[0].text, yesNoKeyboard(script[0].next_codes)); 
+    } else {
+        ctx.reply(`слушай, дружище, я такой команды не знаю, что еще за "${ctx.message.text}"`)
     }
 
   });
-  
+  bot.action(/.+/, async (ctx) => {
+    // console.log('action')
+    let input_code = ctx.callbackQuery.data;
+    let script;
+    try {
+
+      script = await Script.find({ code: input_code });
+    } catch (err) {
+      console.log(err);
+    }
+    if (script.length !== 0) {    
+        // console.log(script[0])
+
+        ctx.reply(script[0].text, yesNoKeyboard(script[0].next_codes)); 
+    }
+
+})
 
   bot.launch(); // запуск бота
 };
