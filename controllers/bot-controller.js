@@ -27,7 +27,6 @@ const boardGameBot = () => {
 
       if (user.length === 0) {
         if (ctx.from.username) {
-          console.log(ctx.from.username);
           let newUser = new User({
             name: ctx.from.username,
             chatId: ctx.chat.id,

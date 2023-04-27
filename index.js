@@ -9,7 +9,8 @@ const axios = require('axios');
 // const WAIT_INTERVAL = 1680000 // 28 minutes
 const WAIT_INTERVAL = 10000
 //  const TIMEOUT = 28800000 //8 hours
-const TIMEOUT = 7200000
+const TIMEOUT = 30000
+// 7200000
 let interval = 0;
 
 app.get('/', (req, res) => {
