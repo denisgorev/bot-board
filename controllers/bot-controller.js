@@ -87,7 +87,51 @@ const boardGameBot = () => {
     }
   );
 
-  const stage = new Scenes.Stage([contactDataWizard]);
+  let personalText;
+  const personalCall = new Scenes.WizardScene(
+    "callpersonal",
+    (ctx) => {
+      ctx.reply(`введите текст для личного сообщения игроку:`);
+      ctx.wizard.state.data = {};
+      return ctx.wizard.next();
+    },
+
+    async (ctx) => {
+      ctx.wizard.state.data.text = ctx.message.text;
+      personalText = ctx.wizard.state.data.text;
+      ctx.reply(`выберите игрока из списка`);
+      let users;
+      try {
+        users = await User.find();
+      } catch (err) {
+        console.log(err);
+      }
+      let allUserNames = [];
+      allUserNames = users.map((user) => ({
+        name: user.name,
+        id: user.chatId,
+      }));
+      let ids = [];
+    //   console.log(allUserNames);
+
+      allUserNames.forEach((element) => {
+        ctx.reply(`имя игрока: ${element.name}, id: ${element.id}`);
+        ids.push(element.id);
+        
+      });
+      ctx.reply("выберите id игрока", yesNoKeyboard(ids));
+      return ctx.wizard.next();
+    },
+    (ctx) => {
+      ctx.wizard.state.data.id = ctx.callbackQuery.data;
+      bot.telegram.sendMessage(ctx.wizard.state.data.id, personalText)
+      ctx.reply('Отправлено!')
+
+      return ctx.scene.leave();
+    }
+  );
+
+  const stage = new Scenes.Stage([contactDataWizard, personalCall]);
 
   bot.use(session());
   bot.use(stage.middleware());
@@ -95,9 +139,9 @@ const boardGameBot = () => {
     ctx.scene.enter("broadcasting");
   });
 
-  //   bot.hears('/broadcast', async (ctx) => {
-  //     bot.telegram.sendMessage(306807986, 'крол привет')
-  //   })
+  bot.command("callpersonal", (ctx) => {
+    ctx.scene.enter("callpersonal");
+  });
 
   bot.command("delete_users", async (ctx) => {
     try {
@@ -107,6 +151,14 @@ const boardGameBot = () => {
       console.log(err);
     }
   });
+
+  bot.command('help', (ctx) => {
+    ctx.replyWithHTML('Набор команд и их описание: \n'+
+    '1. /start - команда, необходимая для запуска бота и авторизации нового игрока \n' +
+    '2. /callpersonal - команда для написания личного сообщения игроку \n' +
+    '3. /broadcasting - команда, позволяющая написать сообщение на всех игроков \n' +
+    '4. /delete_users - команда для удаления всех пользователей из базы данных. Очень желательно не забывать ее использовать после каждой игры')
+  })
 
   bot.on("text", async (ctx) => {
     let input_code = ctx.message.text;
@@ -125,6 +177,13 @@ const boardGameBot = () => {
       );
     }
   });
+
+//   bot.action(/^\d+$/, async (ctx) => {
+//     // console.log('action')
+//     let input_code = ctx.callbackQuery.data;
+//     console.log(input_code);
+//   });
+
   bot.action(/.+/, async (ctx) => {
     // console.log('action')
     let input_code = ctx.callbackQuery.data;
