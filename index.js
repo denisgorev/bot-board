@@ -6,11 +6,9 @@ const boardGameBot = require('./controllers/bot-controller')
 const mongoose = require('mongoose');
 const axios = require('axios');
 
-// const WAIT_INTERVAL = 1680000 // 28 minutes
-const WAIT_INTERVAL = 1680000
-//  const TIMEOUT = 28800000 //8 hours
-const TIMEOUT = 7200000
-// 7200000
+const WAIT_INTERVAL = 840000 // 28 minutes
+const TIMEOUT = 7200000 // 2 hours
+
 let interval = 0;
 
 app.get('/', (req, res) => {

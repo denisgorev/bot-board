@@ -227,7 +227,7 @@ const boardGameBot = () => {
   //   });
 
   bot.action(/.+/, async (ctx) => {
-    console.log("action");
+    // console.log("action");
     let input_code = ctx.callbackQuery.data;
     let script;
     let user;
@@ -237,9 +237,17 @@ const boardGameBot = () => {
     } catch (err) {
       console.log(err);
     }
+
     if (script.length !== 0) {
-      console.log(script[0].acceptable_role_codes[0], user[0].role)
-      if (script[0].acceptable_role_codes[0].includes(user[0].role)) {
+
+      if ( user.length == 0) {
+        ctx.reply(
+          "Так дружище, сначала надо зарегистрироваться"
+        );
+        return
+      }
+
+      if (script[0].acceptable_role_codes.length == 0 || script[0].acceptable_role_codes[0].includes(user[0].role)) {
         ctx.reply(script[0].text, yesNoKeyboard(script[0].next_codes));
       } else {
         ctx.reply(
