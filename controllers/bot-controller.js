@@ -212,7 +212,6 @@ const boardGameBot = () => {
       console.log(err);
     }
     if (script.length !== 0) {
-      ctx.deleteMessage();
       ctx.reply(script[0].text, yesNoKeyboard(script[0].next_codes));
     } else {
       ctx.reply(
@@ -226,14 +225,9 @@ const boardGameBot = () => {
   //     let input_code = ctx.callbackQuery.data;
   //     console.log(input_code);
   //   });
-  let checkButton = 1;
+
   bot.action(/.+/, async (ctx) => {
     // console.log("action");
-    if (checkButton === 1) {
-      console.log("checkbutton", checkButton);
-      ctx.deleteMessage();
-    }
-
     let input_code = ctx.callbackQuery.data;
     let script;
     let user;
@@ -245,23 +239,20 @@ const boardGameBot = () => {
     }
 
     if (script.length !== 0) {
-      if (user.length == 0) {
-        ctx.reply("Так дружище, сначала надо зарегистрироваться");
-        return;
+
+      if ( user.length == 0) {
+        ctx.reply(
+          "Так дружище, сначала надо зарегистрироваться"
+        );
+        return
       }
 
-      if (
-        script[0].acceptable_role_codes.length == 0 ||
-        script[0].acceptable_role_codes[0].includes(user[0].role)
-      ) {
-        checkButton = 1;
+      if (script[0].acceptable_role_codes.length == 0 || script[0].acceptable_role_codes[0].includes(user[0].role)) {
         ctx.reply(script[0].text, yesNoKeyboard(script[0].next_codes));
       } else {
-        checkButton = 0;
         ctx.reply(
           "Так дружище, для твоей роли эта команда недоступна. Выбери другую и поехали дальше"
         );
-        console.log(checkButton);
       }
     }
   });
