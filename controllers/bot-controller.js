@@ -226,11 +226,13 @@ const boardGameBot = () => {
   //     let input_code = ctx.callbackQuery.data;
   //     console.log(input_code);
   //   });
-  let checkButton = 1;
+  let checkButton = 0;
+  
   bot.action(/.+/, async (ctx) => {
+
     // console.log("action");
     if (checkButton === 1) {
-      console.log("checkbutton", checkButton);
+      // console.log("checkbutton", checkButton);
       ctx.deleteMessage();
     }
 
@@ -257,10 +259,13 @@ const boardGameBot = () => {
         checkButton = 1;
         ctx.reply(script[0].text, yesNoKeyboard(script[0].next_codes));
       } else {
+        
         checkButton = 0;
+        
         ctx.reply(
           "Так дружище, для твоей роли эта команда недоступна. Выбери другую и поехали дальше"
         );
+     
         console.log(checkButton);
       }
     }
