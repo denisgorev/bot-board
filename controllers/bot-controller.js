@@ -2,7 +2,7 @@ const { Telegraf } = require("telegraf");
 
 const { Scenes, Stage, session } = require("telegraf");
 const Broadcast = require("../models/broadcast");
-const Role = require("../models/role");
+// const Role = require("../models/role");
 const Script = require("../models/script");
 const User = require("../models/user");
 const { yesNoKeyboard } = require("../utils/keyboards");
@@ -10,38 +10,37 @@ const { yesNoKeyboard } = require("../utils/keyboards");
 const bot = new Telegraf(process.env.TOKEN);
 
 const boardGameBot = () => {
-  const startDataWizard = new Scenes.WizardScene(
-    "start",
-    async (ctx) => {
-      // bot.start(async (ctx) => {
+  // const startDataWizard = new Scenes.WizardScene(
+  //   "start",
+    // async (ctx) => {
+      bot.start(async (ctx) => {
       ctx.replyWithHTML(
         `Привет, ${ctx.from.first_name}! Добро пожаловать в игру!`
 
-        //   <A href="tg://user?id={числовой id}">link</a>`
       );
-      let roles, role;
-      let roles_name = [];
-      try {
-        roles = await Role.find({});
-        for (i in roles) {
-          // console.log(roles[i].role_name)
-          roles_name.push(roles[i].role_name);
-        }
-      } catch (err) {
-        console.log(err);
-      }
+    //   let roles, role;
+    //   let roles_name = [];
+    //   try {
+    //     roles = await Role.find({});
+    //     for (i in roles) {
+    //       // console.log(roles[i].role_name)
+    //       roles_name.push(roles[i].role_name);
+    //     }
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
 
-      ctx.reply("Для начала выберите Вашу роль", yesNoKeyboard(roles_name));
-      ctx.wizard.state.data = {};
-      return ctx.wizard.next();
-    },
+    //   ctx.reply("Для начала выберите Вашу роль", yesNoKeyboard(roles_name));
+    //   ctx.wizard.state.data = {};
+    //   return ctx.wizard.next();
+    // },
 
-    async (ctx) => {
-      if (ctx.callbackQuery) {
-        ctx.wizard.state.data.role = ctx.callbackQuery.data;
-        ctx.reply(
-          `Отлично, я тебя зарегистрировал, в картотеке НКВД ты проходишь как ${ctx.callbackQuery.data}`
-        );
+    // async (ctx) => {
+      // if (ctx.callbackQuery) {
+      //   ctx.wizard.state.data.role = ctx.callbackQuery.data;
+      //   ctx.reply(
+      //     `Отлично, я тебя зарегистрировал, в картотеке НКВД ты проходишь как ${ctx.callbackQuery.data}`
+      //   );
 
         let user = [];
 
@@ -55,14 +54,14 @@ const boardGameBot = () => {
               let newUser = new User({
                 name: ctx.from.username,
                 chatId: ctx.chat.id,
-                role: ctx.wizard.state.data.role,
+                // role: ctx.wizard.state.data.role,
               });
               await newUser.save();
             } else {
               let newUser = new User({
                 name: ctx.from.first_name,
                 chatId: ctx.chat.id,
-                role: ctx.wizard.state.data.role,
+                // role: ctx.wizard.state.data.role,
               });
               await newUser.save();
             }
@@ -70,13 +69,13 @@ const boardGameBot = () => {
         } catch (err) {
           console.log(err);
         }
-      } else {
-        ctx.reply(
-          "Дружище, нажимай, пожалуйста, на кнопки. Начинай регистрацию снова."
-        );
-      }
+    //   } else {
+    //     ctx.reply(
+    //       "Дружище, нажимай, пожалуйста, на кнопки. Начинай регистрацию снова."
+    //     );
+    //   }
 
-      return ctx.scene.leave();
+    //   return ctx.scene.leave();
     }
   );
 
@@ -166,7 +165,7 @@ const boardGameBot = () => {
   const stage = new Scenes.Stage([
     contactDataWizard,
     personalCall,
-    startDataWizard,
+    // startDataWizard,
   ]);
 
   bot.use(session());
@@ -226,15 +225,16 @@ const boardGameBot = () => {
   //     let input_code = ctx.callbackQuery.data;
   //     console.log(input_code);
   //   });
-  let checkButton = 0;
+
+  // let checkButton = 0;
   
   bot.action(/.+/, async (ctx) => {
 
     // console.log("action");
-    if (checkButton === 1) {
+    // if (checkButton === 1) {
       // console.log("checkbutton", checkButton);
       ctx.deleteMessage();
-    }
+    // }
 
     let input_code = ctx.callbackQuery.data;
     let script;
@@ -252,22 +252,22 @@ const boardGameBot = () => {
         return;
       }
 
-      if (
-        script[0].acceptable_role_codes.length == 0 ||
-        script[0].acceptable_role_codes[0].includes(user[0].role)
-      ) {
-        checkButton = 1;
+      // if (
+      //   script[0].acceptable_role_codes.length == 0 ||
+      //   script[0].acceptable_role_codes[0].includes(user[0].role)
+      // ) {
+      //   checkButton = 1;
         ctx.reply(script[0].text, yesNoKeyboard(script[0].next_codes));
-      } else {
+      // } else {
         
-        checkButton = 0;
+      //   checkButton = 0;
         
-        ctx.reply(
-          "Так дружище, для твоей роли эта команда недоступна. Выбери другую и поехали дальше"
-        );
+      //   ctx.reply(
+      //     "Так дружище, для твоей роли эта команда недоступна. Выбери другую и поехали дальше"
+      //   );
      
-        console.log(checkButton);
-      }
+      //   console.log(checkButton);
+      // }
     }
   });
 
