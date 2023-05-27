@@ -68,6 +68,7 @@ const boardGameBot = () => {
           }
         } catch (err) {
           console.log(err);
+          process.exit(1)
         }
     //   } else {
     //     ctx.reply(
@@ -88,6 +89,7 @@ const boardGameBot = () => {
         broadcasts = await Broadcast.find({});
       } catch (err) {
         console.log(err);
+        process.exit(1)
       }
       let broadcastsCodes = [];
       broadcastsCodes = broadcasts.map((broadcast) => broadcast.code);
@@ -129,6 +131,11 @@ const boardGameBot = () => {
     },
 
     async (ctx) => {
+      if (ctx.message.text === undefined) {
+        ctx.reply(`Сообщение должно быть текстовым. Вводи еще раз!`);
+        return
+      }
+
       ctx.wizard.state.data.text = ctx.message.text;
       personalText = ctx.wizard.state.data.text;
       ctx.reply(`выберите игрока из списка`);
@@ -137,6 +144,8 @@ const boardGameBot = () => {
         users = await User.find();
       } catch (err) {
         console.log(err);
+        process.exit(1)
+       
       }
       let allUserNames = [];
       allUserNames = users.map((user) => ({
@@ -154,6 +163,10 @@ const boardGameBot = () => {
       return ctx.wizard.next();
     },
     (ctx) => {
+      if (ctx.callbackQuery === undefined) {
+        ctx.reply(`Я понимаю, но надо нажать на кнопку. Выбери игрока!!!`);
+        return
+      }
       ctx.wizard.state.data.id = ctx.callbackQuery.data;
       bot.telegram.sendMessage(ctx.wizard.state.data.id, personalText);
       ctx.reply("Отправлено!");
@@ -188,6 +201,7 @@ const boardGameBot = () => {
       ctx.replyWithHTML(`Я удалил всех игроков, я могу идти спать?`);
     } catch (err) {
       console.log(err);
+      process.exit(1)
     }
   });
 
@@ -209,6 +223,7 @@ const boardGameBot = () => {
       script = await Script.find({ code: input_code });
     } catch (err) {
       console.log(err);
+      process.exit(1)
     }
     if (script.length !== 0) {
       ctx.deleteMessage();
@@ -244,6 +259,7 @@ const boardGameBot = () => {
       user = await User.find({ chatId: ctx.chat.id });
     } catch (err) {
       console.log(err);
+      process.exit(1)
     }
 
     if (script.length !== 0) {
